@@ -1,3 +1,5 @@
+console.log("You are in the script.js file");
+
 var movie = "Mr. Nobody";
 var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
