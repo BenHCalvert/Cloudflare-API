@@ -1,10 +1,10 @@
 console.log("You are in the script.js file");
 
 var movie = "Mr. Nobody";
-var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+var store = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
 
 $.ajax({
-    url: queryURL,
+    url: store,
     method: "GET"
 }).then(function(response) {
     // Create a new table row element
