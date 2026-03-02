@@ -1,23 +1,57 @@
-console.log("You are in the script.js file");
+import { links } from './store.js';
 
-var movie = "Mr. Nobody";
-var store = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
+function renderLinks() {
+  const container = document.getElementById('links-container');
+  links.forEach(({ name, url }) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.paddingBottom = '30px';
 
-$.ajax({
-    url: store,
-    method: "GET"
-}).then(function(response) {
-    // Create a new table row element
-    var tRow = $("<tr>");
+    const btn = document.createElement('a');
+    btn.href = url;
+    btn.target = '_blank';
+    btn.rel = 'noopener noreferrer';
+    btn.className = 'btn btn-outline-light btn-lg';
+    btn.textContent = name;
 
-    // Methods run on jQuery selectors return the selector they we run on
-    // This is why we can create and save a reference to a td in the same statement we update its text
-    var titleTd = $("<td>").text(response.Title);
-    var yearTd = $("<td>").text(response.Year);
-    var actorsTd = $("<td>").text(response.Actors);
-    
-    // Append the newly created table data to the table row
-    tRow.append(titleTd, yearTd, actorsTd);
-    // Append the table row to the table body
-    $("tbody").append(tRow);
+    wrapper.appendChild(btn);
+    container.appendChild(wrapper);
+  });
+}
+
+async function loadMovieData() {
+  const movieSection = document.getElementById('movie-section');
+  const tbody = document.getElementById('movie-data');
+  const errorEl = document.getElementById('movie-error');
+
+  movieSection.style.display = 'block';
+
+  try {
+    const response = await fetch('https://www.omdbapi.com/?t=Mr.+Nobody&apikey=trilogy');
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+
+    const data = await response.json();
+    if (data.Error) throw new Error(data.Error);
+
+    const row = document.createElement('tr');
+    const titleTd = document.createElement('td');
+    const yearTd = document.createElement('td');
+    const actorsTd = document.createElement('td');
+
+    titleTd.textContent = data.Title;
+    yearTd.textContent = data.Year;
+    actorsTd.textContent = data.Actors;
+
+    row.append(titleTd, yearTd, actorsTd);
+    tbody.appendChild(row);
+  } catch (err) {
+    errorEl.textContent = `Could not load movie data: ${err.message}`;
+    errorEl.style.display = 'block';
+    tbody.closest('table').style.display = 'none';
+  }
+}
+
+document.getElementById('load-btn').addEventListener('click', function () {
+  this.style.display = 'none';
+  renderLinks();
+  loadMovieData();
 });
